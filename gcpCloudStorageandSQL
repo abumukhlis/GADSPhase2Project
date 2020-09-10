@@ -1,0 +1,47 @@
+#LAB:Google Cloud Fundamentals: Getting Started with Cloud Storage and Cloud SQL 
+
+#LAB objectives
+
+In this lab, you learn how to perform the following tasks:
+
+    -Create a Cloud Storage bucket and place an image into it.
+
+    -Create a Cloud SQL instance and configure it.
+
+    -Connect to the Cloud SQL instance from a web server.
+
+    -Use the image in the Cloud Storage bucket on a web page
+    
+ ##STEPS
+ 
+ 1. Create a Cloud Storage bucket and place an image into it.
+ 	-firstly we need to create a bloghost webserver VM instance with a startup script
+ 	
+ 		gcloud compute instances create bloghost --zone=us-central1-a --machine-type=n1-standard-1 --subnet=default --metadata=startup-script=apt-get\ update$'\n'apt-get\ install\ apache2\ php\ php-mysql\ -y$'\n'service\ apache2\ restart --tags=http-server --image=debian-9-stretch-v20200910 --image-project=debian-cloud 
+
+gcloud compute firewall-rules create default-allow-http --direction=INGRESS --network=default --action=ALLOW --rules=tcp:80 --source-ranges=0.0.0.0/0 --target-tags=http-server
+
+
+	-The following steps will create the cloud storage using the gsutil command:
+	
+		-Enter your chosen location into an environment variable called LOCATION. Enter this command:
+			export LOCATION=US
+		
+		-The DEVSHELL_PROJECT_ID environment variable contains your project ID. Enter this command to make a bucket named after your project ID:
+			gsutil mb -l $LOCATION gs://$DEVSHELL_PROJECT_ID
+			
+		-Retrieve a banner image from a publicly accessible Cloud Storage location:
+			gsutil cp gs://cloud-training/gcpfci/my-excellent-blog.png my-excellent-blog.png
+
+		-Copy the banner image to your newly created Cloud Storage bucket:
+			gsutil cp my-excellent-blog.png gs://$DEVSHELL_PROJECT_ID/my-excellent-blog.png
+
+		-Modify the Access Control List of the object you just created so that it is readable by everyone:
+			gsutil acl ch -u allUsers:R gs://$DEVSHELL_PROJECT_ID/my-excellent-blog.png
+
+
+	
+2. Create a Cloud SQL instance and configure it.
+
+		
+		-
